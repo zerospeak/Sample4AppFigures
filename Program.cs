@@ -1,3 +1,17 @@
+/*
+ * Personal Finance Tracker
+ * Author: Leeroy D'Souza
+ * Date: 2024-01-09
+ * 
+ * This application is a personal finance management system that helps users track
+ * their expenses, income, and savings goals. It implements various design patterns
+ * including Repository, Strategy, Facade, and Command patterns to maintain clean,
+ * maintainable code. The system allows users to:
+ * - Track expenses and income
+ * - Set and monitor savings goals
+ * - View financial transaction history
+ * - Calculate progress towards financial goals
+ */
 using System;
 using System.Collections.Generic;
 using System.Linq;
