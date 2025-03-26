@@ -1,210 +1,266 @@
-# AppFigures Analytics Application Documentation
+Personal Finance Tracker (PFT) Technical Documentation
 
-This document provides comprehensive technical documentation for the AppFigures Analytics Application, a demonstration platform showcasing modern C# design patterns and architectural principles.
+By Leeroy D'Souza
 
-## Overview
+March 26, 2025
 
-The AppFigures Analytics Application is a console-based demonstration tool that implements a simplified app store analytics system. Built using .NET 8, it serves as a teaching resource for software architecture and design patterns while providing practical functionality for analyzing app metrics.
+|  | Introduction |
+| --- | --- |
+|  | Features Overview |
+|  | Code Structure |
+|  | Usage Instructions |
+|  | Running Demos |
+|  | Design Choices |
+|  | Best Practices |
+|  | Next Steps |
+|  | Glossary |
 
-## Architectural Overview
+## Introduction
 
-The application employs a layered architecture pattern with clear separation of concerns, implementing multiple design patterns and principles. The following diagram illustrates the system's architecture and component relationships:
+This technical documentation covers the Personal Finance Tracker (PFT) application, a console-based financial management tool written in C#. The application enables users to track expenses, incomes, and savings goals while providing comprehensive reporting functionality.
+
+## Features Overview
+
+The application offers the following core functionalities:
+
+- Expense tracking with categories and amounts
+- Income recording
+- Savings goal setting
+- Financial progress monitoring
+- Comprehensive error handling
+
+## Code Structure
+
+### Class Design
+
+```csharp
+class Expense
+{
+    public string Category { get; set; }
+    public decimal Amount { get; set; }
+    public DateTime Date { get; set; }
+
+    public Expense(string category, decimal amount, DateTime date)
+    {
+        Category = category;
+        Amount = amount;
+        Date = date;
+    }
+}
+```
+
+The `Expense` class demonstrates proper encapsulation with properties and a constructor. This design choice provides clean data management while maintaining flexibility for future enhancements.
+
+### Main Program Structure
+
+The application uses a menu-driven interface with static methods organized by functionality:
+
+- Data Management Methods (AddExpense, AddIncome)
+- View Methods (ViewExpenses, ViewIncomes)
+- Analysis Methods (CheckSavingsProgress)
+- Configuration Methods (SetSavingsGoal)
+
+## Usage Instructions
+
+Launch the applicationChoose from the menu options (1-7)Follow the prompts for each operationReview your data using the view optionsExit when finished## Running Demos
+
+### Basic Operations Demo
+
+1. Run the application
+2. Add an expense:
+```
+Option 1 > Category: Groceries > Amount: 50.00
+```
+
+
+3. Add an income:
+```
+Option 2 > Amount: 1000.00
+```
+
+
+4. Set a savings goal:
+```
+Option 3 > Amount: 500.00
+```
+
+
+5. View progress:
+```
+Option 6
+```
+
+
+
+### Error Handling Demo
+
+1. Invalid amount entry:
+```
+Option 1 > Category: Food > Amount: abc
+```
+
+
+2. Empty lists handling:
+```
+Option 4 (when no expenses exist)
+```
+
+
+3. Division by zero prevention:
+```
+Option 6 (with zero savings goal)
+```
+
+
+
+## Design Choices
+
+1. **Type Safety**  - Used `decimal` for financial calculations to avoid floating-point precision issues
+  - Implemented proper type conversion with TryParse
+
+
+2. **Error Handling**  - Comprehensive exception catching in all operations
+  - Clear error messages for user feedback
+  - Graceful recovery from invalid inputs
+
+
+3. **Code Organization**  - Separated concerns into distinct methods
+  - Consistent naming conventions
+  - Clear separation of UI logic and business logic
+
+
+
+## Best Practices
+
+1. **Input Validation**  - Validates all numeric inputs
+  - Checks for empty collections
+  - Prevents null references
+
+
+2. **Code Readability**  - Clear method naming
+  - Consistent formatting
+  - Descriptive variable names
+
+
+3. **User Experience**  - Intuitive menu system
+  - Informative feedback messages
+  - Easy navigation
+
+
+
+## Next Steps
+
+1. Enhancement Possibilities:
+  - Add persistent storage
+  - Implement data visualization
+  - Add budget categories
+  - Include reporting features
+
+
+2. Maintenance Recommendations:
+  - Regular code reviews
+  - Performance monitoring
+  - Security audits
+
+
+
+## Glossary
+
+- **Encapsulation**: Bundling data and methods that operate on that data within a single unit
+- **Type Safety**: Ensuring operations are performed on appropriate data types
+- **Exception Handling**: Managing runtime errors gracefully
+- **Separation of Concerns**: Organizing code into distinct sections based on functionality
+- **TryParse**: Safe conversion of strings to numeric types
+
+## Application Flow Diagram
 
 ```mermaid
 flowchart TD
-    subgraph Client["Client Layer"]
-        CMD[Command Pattern]
-        CMD -->|"ExecuteAsync()"| SVC[IAnalyticsService]
-    end
+    Start([Start]) --> Menu[/"Display Menu Options"/]
+    Menu --> Choice{User Choice}
     
-    subgraph Services["Services Layer"]
-        SVC -->|"GetTopAppsAsync()"| REP[IAppRepository]
-        FACTORY["IServiceFactory<br/><i>Creates Services</i>"] -->|"CreateAnalyticsService()"| SVC
-    end
+    Choice -->|"1"| AddExpense["Add Expense"]
+    Choice -->|"2"| AddIncome["Add Income"]
+    Choice -->|"3"| SetGoal["Set Savings Goal"]
+    Choice -->|"4"| ViewExpenses["View Expenses"]
+    Choice -->|"5"| ViewIncomes["View Incomes"]
+    Choice -->|"6"| CheckProgress["Check Progress"]
+    Choice -->|"7"| Exit([Exit])
     
-    subgraph Data["Data Access Layer"]
-        REP -->|"GetAllAppsAsync()<br/>GetAppStatsAsync()"| DM["Domain Models<br/><i>App, AppStats</i>"]
-    end
-
-    %% Styling
-    classDef client fill:#a8d08d,stroke:#507e32,color:#333
-    classDef service fill:#95b3d7,stroke:#366092,color:#333
-    classDef data fill:#e6b8b7,stroke:#953735,color:#333
+    AddExpense --> ValidateAmount{Valid Amount?}
+    ValidateAmount -->|No| Error["Display Error"]
+    ValidateAmount -->|Yes| StoreExpense["Store Expense"]
     
-    class CMD client
-    class SVC,FACTORY service
-    class REP,DM data
+    AddIncome --> ValidateIncome{Valid Amount?}
+    ValidateIncome -->|No| Error
+    ValidateIncome -->|Yes| StoreIncome["Store Income"]
+    
+    SetGoal --> ValidateGoal{Valid Amount?}
+    ValidateGoal -->|No| Error
+    ValidateGoal -->|Yes| StoreGoal["Store Goal"]
+    
+    StoreExpense --> Menu
+    StoreIncome --> Menu
+    StoreGoal --> Menu
+    Error --> Menu
+    ViewExpenses --> Menu
+    ViewIncomes --> Menu
+    CheckProgress --> Menu
+    
+    classDef process fill:#a8d5ff,stroke:#333,stroke-width:2px,color:#000000
+    classDef decision fill:#ffe6a8,stroke:#333,stroke-width:2px,color:#000000
+    classDef terminal fill:#d5ffa8,stroke:#333,stroke-width:2px,color:#000000
+    classDef error fill:#ffa8a8,stroke:#333,stroke-width:2px,color:#000000
+    
+    class Start,Exit terminal
+    class Menu,AddExpense,AddIncome,SetGoal,ViewExpenses,ViewIncomes,CheckProgress,StoreExpense,StoreIncome,StoreGoal process
+    class Choice,ValidateAmount,ValidateIncome,ValidateGoal decision
+    class Error error
 ```
 
-The architecture diagram above illustrates the three main layers of the application:
+The flow diagram above illustrates the application's core functionality and error handling mechanisms. The color coding represents different types of operations:
 
-- Green Client Layer: Contains the Command Pattern implementation that initiates operations
-- Blue Services Layer: Houses the business logic and factory pattern for service creation
-- Red Data Access Layer: Manages domain models and repository interactions
+- Green terminals (Start/Exit) show the application boundaries
+- Blue processes show main operations
+- Yellow diamonds indicate decision points
+- Red boxes highlight error handling
 
-Arrows indicate method calls and dependencies between components, showing how requests flow from the command layer down through services to data access.
+Each path through the diagram represents a possible user interaction, with all operations returning to the main menu after completion or error handling.
 
-## Domain Models
+## Error Handling Flow Diagram
 
-The application implements two primary domain models that represent core business entities:
-
-```csharp
-public record App(string Id, string Name, string Developer);
-public record AppStats(int Downloads, decimal Revenue);
+```mermaid
+flowchart TD
+    Start([Start]) --> Input["User Input"]
+    Input --> TryParse["TryParse Operation"]
+    
+    TryParse -->|Success| Process["Process Data"]
+    TryParse -->|Failure| Error["Error Handling"]
+    
+    Process --> Validate["Validation Check"]
+    Validate -->|Valid| Store["Store Data"]
+    Validate -->|Invalid| Error
+    
+    Store --> Success([Success])
+    Error --> Message["Display Error Message"]
+    Message --> Retry([Retry])
+    
+    classDef process fill:#a8d5ff,stroke:#333,stroke-width:2px,color:#000000
+    classDef decision fill:#ffe6a8,stroke:#333,stroke-width:2px,color:#000000
+    classDef terminal fill:#d5ffa8,stroke:#333,stroke-width:2px,color:#000000
+    classDef error fill:#ffa8a8,stroke:#333,stroke-width:2px,color:#000000
+    
+    class Start,Success,Retry terminal
+    class Input,Process,Store,Message process
+    class TryParse,Validate decision
+    class Error error
 ```
 
-These immutable records represent:
+The error handling diagram above shows the application's robust error handling mechanism:
 
-- `App`: Basic application metadata
-- `AppStats`: Application performance metrics
+- All user inputs go through a TryParse operation to ensure valid numeric data
+- Successful parsing leads to data validation before storage
+- Invalid inputs or failed validation trigger the error handling system
+- Users can retry operations after receiving clear error messages
 
-## Repository Pattern Implementation
-
-The repository pattern provides data access abstraction through the `IAppRepository` interface:
-
-```csharp
-public interface IAppRepository
-{
-    Task<IEnumerable<App>> GetAllAppsAsync();
-    Task<AppStats> GetAppStatsAsync(string appId);
-}
-```
-
-Key features:
-
-- Asynchronous operations for efficient I/O
-- Interface segregation principle compliance
-- Clear separation of data access concerns
-
-## Service Layer
-
-The `AnalyticsService` implements business logic for retrieving top-performing apps:
-
-```csharp
-public class AnalyticsService : IAnalyticsService
-{
-    private readonly IAppRepository _repository;
-
-    public AnalyticsService(IAppRepository repository)
-    {
-        _repository = repository;
-    }
-
-    public async Task<IEnumerable<(App App, AppStats Stats)>> GetTopAppsAsync(int count)
-    {
-        var apps = await _repository.GetAllAppsAsync();
-        var results = new List<(App, AppStats)>();
-
-        foreach (var app in apps)
-        {
-            var stats = await _repository.GetAppStatsAsync(app.Id);
-            results.Add((app, stats));
-        }
-
-        return results.OrderByDescending(r => r.Stats.Revenue).Take(count);
-    }
-}
-```
-
-Implementation highlights:
-
-- Dependency injection through constructor
-- Async/await pattern for efficient operation
-- LINQ usage for data transformation
-- Value tuple return type for clean data structure
-
-## Design Patterns Implementation
-
-### Abstract Factory Pattern
-
-```csharp
-public interface IServiceFactory
-{
-    IAnalyticsService CreateAnalyticsService();
-}
-
-public class ServiceFactory : IServiceFactory
-{
-    public IAnalyticsService CreateAnalyticsService()
-    {
-        return new AnalyticsService(new AppRepository());
-    }
-}
-```
-
-Provides service instantiation abstraction while maintaining dependency injection principles.
-
-### Command Pattern
-
-```csharp
-public interface ICommand
-{
-    Task ExecuteAsync();
-}
-
-public class GetTopAppsCommand : ICommand
-{
-    private readonly IAnalyticsService _analyticsService;
-    private readonly int _count;
-
-    public GetTopAppsCommand(IAnalyticsService analyticsService, int count)
-    {
-        _analyticsService = analyticsService;
-        _count = count;
-    }
-
-    public async Task ExecuteAsync()
-    {
-        var topApps = await _analyticsService.GetTopAppsAsync(_count);
-        Console.WriteLine($"Top {_count} Apps by Revenue:");
-        foreach (var (app, stats) in topApps)
-        {
-            Console.WriteLine($"{app.Name} by {app.Developer}: ${stats.Revenue:N2}");
-        }
-    }
-}
-```
-
-Encapsulates operations as objects, enabling flexible command execution and extension.
-
-## Technical Features
-
-### Modern C# Features
-
-- Records for immutable domain models
-- Nullable reference types for null safety
-- Pattern matching with tuples
-- Async/await for asynchronous programming
-- LINQ for data transformations
-
-### Principles Implementation
-
-1. DRY Principle
-  - Single responsibility per component
-  - Shared interfaces for common operations
-  - Consistent naming conventions
-
-
-2. SOLID Principles
-  - Single Responsibility: Each class handles one concern
-  - Open/Closed: Extension through interfaces
-  - Liskov Substitution: Interface-based design
-  - Interface Segregation: Focused interfaces
-  - Dependency Inversion: Abstraction over concretions
-
-
-
-## Getting Started
-
-Clone the repository containing the source codeEnsure .NET 8 SDK is installedRestore NuGet packagesRun the application using `dotnet run`## Extending the Application
-
-The architecture supports easy extension through:
-
-- Adding new commands implementing `ICommand`
-- Creating new services through the factory pattern
-- Implementing additional repository interfaces
-- Adding new domain models as needed
-
-## Version Control Guidelines
-
-Create a new repository on GitHub/GitLabClone the repository locallyCreate feature branches for modificationsSubmit pull requests for reviewMaintain detailed commit messagesThis documentation covers the technical implementation details while maintaining clarity and professionalism. The application serves as a reference implementation for modern C# development practices and architectural patterns.
+This comprehensive error handling ensures data integrity and provides a smooth user experience even when invalid inputs are provided.
